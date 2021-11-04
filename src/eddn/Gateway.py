@@ -9,6 +9,7 @@ market data to the Announcer daemons.
 import logging
 import zlib
 from datetime import datetime
+from typing import Dict
 from urllib.parse import parse_qs
 
 import gevent
@@ -20,9 +21,6 @@ from pkg_resources import resource_string
 
 from eddn.conf.Settings import Settings, loadConfig
 from eddn.core.Validator import ValidationSeverity, Validator
-
-# import os
-
 
 monkey.patch_all()
 
@@ -43,7 +41,7 @@ stats_collector = StatsCollector()
 stats_collector.start()
 
 
-def configure():
+def configure() -> None:
     """
     Get the list of transports to bind from settings.
 
@@ -57,7 +55,7 @@ def configure():
         validator.addSchemaResource(schema_ref, resource_string('eddn.Gateway', schema_file))
 
 
-def push_message(parsed_message, topic):
+def push_message(parsed_message: Dict, topic: str) -> None:
     """
     Push a message our to subscribed listeners.
 
@@ -71,7 +69,7 @@ def push_message(parsed_message, topic):
     # announcers with schema as topic
     compressed_msg = zlib.compress(string_message)
 
-    send_message = f"{str(topic)} |-| {compressed_msg}"
+    send_message = f"{str(topic)!r} |-| {compressed_msg!r}"
 
     sender.send(send_message)
     stats_collector.tally("outbound")
@@ -104,6 +102,7 @@ def get_decompressed_message():
         try:
             # Auto header checking.
             message_body = zlib.decompress(request.body.read(), 15 + 32)
+
         except zlib.error:
             # Negative wbits suppresses adler32 checksumming.
             message_body = zlib.decompress(request.body.read(), -15)
@@ -117,6 +116,7 @@ def get_decompressed_message():
             # be the body we're looking for.
             try:
                 message_body = form_enc_parsed['data'][0]
+
             except (KeyError, IndexError):
                 raise MalformedUploadError(
                     "No 'data' POST key/value found. Check your POST key "
@@ -129,6 +129,7 @@ def get_decompressed_message():
         if data_key:
             # This is a form-encoded POST. Support the silly people.
             message_body = data_key
+
         else:
             # This is a non form-encoded POST body.
             message_body = request.body.read()
@@ -145,9 +146,8 @@ def parse_and_error_handle(data):
     """
     try:
         parsed_message = simplejson.loads(data)
-    except (
-        MalformedUploadError, TypeError, ValueError
-    ) as exc:
+
+    except (MalformedUploadError, TypeError, ValueError) as exc:
         # Something bad happened. We know this will return at least a
         # semi-useful error message, so do so.
         response.status = 400
@@ -188,6 +188,7 @@ def upload():
     try:
         # Body may or may not be compressed.
         message_body = get_decompressed_message()
+
     except zlib.error as exc:
         # Some languages and libs do a crap job zlib compressing stuff. Provide
         # at least some kind of feedback for them to try to get pointed in
