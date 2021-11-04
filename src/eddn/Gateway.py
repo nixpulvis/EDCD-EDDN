@@ -9,10 +9,10 @@ market data to the Announcer daemons.
 import logging
 import zlib
 from datetime import datetime
+from urllib.parse import parse_qs
 
 import gevent
 import simplejson
-import urlparse
 import zmq.green as zmq
 from bottle import Bottle, request, response
 from gevent import monkey
@@ -111,7 +111,7 @@ def get_decompressed_message():
         # At this point, we're not sure whether we're dealing with a straight
         # un-encoded POST body, or a form-encoded POST. Attempt to parse the
         # body. If it's not form-encoded, this will return an empty dict.
-        form_enc_parsed = urlparse.parse_qs(message_body)
+        form_enc_parsed = parse_qs(message_body)
         if form_enc_parsed:
             # This is a form-encoded POST. The value of the data attrib will
             # be the body we're looking for.
