@@ -24,7 +24,7 @@ from eddn.core.Validator import ValidationSeverity, Validator
 
 
 monkey.patch_all()
-from bottle import Bottle, get, post, request, response, run
+from bottle import Bottle, request, response
 
 app = Bottle()
 
