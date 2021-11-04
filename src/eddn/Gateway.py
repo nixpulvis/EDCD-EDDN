@@ -137,7 +137,7 @@ def get_decompressed_message() -> bytes:
     return message_body
 
 
-def parse_and_error_handle(data: str) -> str:
+def parse_and_error_handle(data: bytes) -> str:
     """
     Parse an incoming message and handle errors.
 
@@ -179,7 +179,7 @@ def parse_and_error_handle(data: str) -> str:
 
 
 @app.route('/upload/', method=['OPTIONS', 'POST'])
-def upload():
+def upload() -> str:
     """
     Handle an /upload/ request.
 
@@ -194,14 +194,14 @@ def upload():
         # at least some kind of feedback for them to try to get pointed in
         # the correct direction.
         response.status = 400
-        logger.error(f"gzip error with {get_remote_address()}: {exc.message}")
-        return exc.message
+        logger.error(f"gzip error with {get_remote_address()}: {exc}")
+        return str(exc)
 
     except MalformedUploadError as exc:
         # They probably sent an encoded POST, but got the key/val wrong.
         response.status = 400
-        logger.error(f"Error to {get_remote_address()}: {exc.message}")
-        return exc.message
+        logger.error(f"Error to {get_remote_address()}: {exc}")
+        return str(exc)
 
     stats_collector.tally("inbound")
     return parse_and_error_handle(message_body)
