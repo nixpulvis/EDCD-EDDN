@@ -9,7 +9,7 @@ market data to the Announcer daemons.
 import logging
 import zlib
 from datetime import datetime
-from typing import Dict
+from typing import Callable, Dict
 from urllib.parse import parse_qs
 
 import gevent
@@ -252,7 +252,7 @@ class EnableCors(object):
     api = 2
 
     @staticmethod
-    def apply(fn, context):
+    def apply(self, fn: Callable, context: str):
         """
         Apply CORS headers to the calling bottle app.
 
