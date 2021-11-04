@@ -71,7 +71,7 @@ def push_message(parsed_message, topic):
     # announcers with schema as topic
     compressed_msg = zlib.compress(string_message)
 
-    send_message = "%s |-| %s" % (str(topic), compressed_msg)
+    send_message = f"{str(topic)} |-| {compressed_msg}"
 
     sender.send(send_message)
     stats_collector.tally("outbound")
@@ -151,7 +151,7 @@ def parse_and_error_handle(data):
         # Something bad happened. We know this will return at least a
         # semi-useful error message, so do so.
         response.status = 400
-        logger.error("Error to %s: %s" % (get_remote_address(), exc.message))
+        logger.error(f"Error to {get_remote_address()}: {exc.message}")
         return str(exc)
 
     # Here we check if an outdated schema has been passed
@@ -169,10 +169,9 @@ def parse_and_error_handle(data):
 
         # Sends the parsed message to the Relay/Monitor as compressed JSON.
         gevent.spawn(push_message, parsed_message, parsed_message['$schemaRef'])
-        logger.info("Accepted %s upload from %s" % (
-            parsed_message, get_remote_address()
-        ))
+        logger.info(f"Accepted {parsed_message} upload from {get_remote_address()}")
         return 'OK'
+
     else:
         response.status = 400
         stats_collector.tally("invalid")
@@ -194,12 +193,13 @@ def upload():
         # at least some kind of feedback for them to try to get pointed in
         # the correct direction.
         response.status = 400
-        logger.error("gzip error with %s: %s" % (get_remote_address(), exc.message))
+        logger.error(f"gzip error with {get_remote_address()}: {exc.message}")
         return exc.message
+
     except MalformedUploadError as exc:
         # They probably sent an encoded POST, but got the key/val wrong.
         response.status = 400
-        logger.error("Error to %s: %s" % (get_remote_address(), exc.message))
+        logger.error(f"Error to {get_remote_address()}: {exc.message}")
         return exc.message
 
     stats_collector.tally("inbound")
