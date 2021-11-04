@@ -137,7 +137,7 @@ def get_decompressed_message() -> bytes:
     return message_body
 
 
-def parse_and_error_handle(data):
+def parse_and_error_handle(data: str) -> str:
     """
     Parse an incoming message and handle errors.
 
@@ -151,7 +151,7 @@ def parse_and_error_handle(data):
         # Something bad happened. We know this will return at least a
         # semi-useful error message, so do so.
         response.status = 400
-        logger.error(f"Error to {get_remote_address()}: {exc.message}")
+        logger.error(f"Error to {get_remote_address()}: {exc}")
         return str(exc)
 
     # Here we check if an outdated schema has been passed
