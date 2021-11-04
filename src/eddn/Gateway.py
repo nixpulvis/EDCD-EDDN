@@ -273,7 +273,7 @@ class EnableCors(object):
         return _enable_cors
 
 
-def main():
+def main() -> None:
     """Handle setting up and running the bottle app."""
     loadConfig()
     configure()
