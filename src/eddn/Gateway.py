@@ -19,7 +19,7 @@ from bottle import Bottle, request, response
 from gevent import monkey
 from pkg_resources import resource_string
 
-from eddn.conf.Settings import Settings, loadConfig
+from eddn.conf.Settings import Settings, load_config
 from eddn.core.Validator import ValidationSeverity, Validator
 
 monkey.patch_all()
@@ -276,7 +276,7 @@ class EnableCors(object):
 
 def main() -> None:
     """Handle setting up and running the bottle app."""
-    loadConfig()
+    load_config()
     configure()
 
     app.install(EnableCors())

@@ -39,7 +39,7 @@ from functools import wraps
 from pkg_resources import resource_string
 # import os
 
-from eddn.conf.Settings import Settings, loadConfig
+from eddn.conf.Settings import Settings, load_config
 
 from gevent import monkey
 monkey.patch_all()
@@ -244,7 +244,7 @@ class CustomLogging(object):
 
 def main():
     logger.info('Loading config...')
-    loadConfig()
+    load_config()
 
     logger.info('Installing EnableCors ...')
     app.install(EnableCors())
