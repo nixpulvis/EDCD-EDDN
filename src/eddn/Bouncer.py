@@ -29,6 +29,7 @@ Architecture:
 import logging
 import zlib
 from datetime import datetime
+from typing import Callable
 
 import gevent
 import requests
@@ -229,7 +230,7 @@ class EnableCors(object):
     name = 'enable_cors'
     api = 2
 
-    def apply(self, fn, context):
+    def apply(self, fn: Callable, context: str):
         """
         Apply CORS headers to the calling bottle app.
 
@@ -257,7 +258,7 @@ class CustomLogging(object):
     name = 'custom_logging'
     api = 2
 
-    def apply(self, fn, context):
+    def apply(self, fn: Callable, context: str):
         """
         Apply custom logging to bottle request.
 
