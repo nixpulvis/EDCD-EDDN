@@ -7,12 +7,11 @@ import time
 import uuid
 import zlib
 from threading import Thread
-from typing import Callable
 
 import gevent
 import simplejson
 import zmq.green as zmq
-from bottle import Bottle, request, response
+from bottle import Bottle, response
 from gevent import monkey
 
 from eddn.conf.Settings import Settings, load_config
@@ -78,7 +77,7 @@ class Relay(Thread):
 
         return hashlib.sha1(f"{self.uploader_nonce!r}-{uploader.encode}".encode('utf8')).hexdigest()
 
-    def run(self) -> None:  # noqa: CCR001
+    def run(self) -> None:
         """Handle receiving messages from Gateway and passing them on."""
         # These form the connection to the Gateway daemon(s) upstream.
         context = zmq.Context()
